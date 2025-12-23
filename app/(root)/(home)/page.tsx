@@ -1,11 +1,9 @@
-import { UserButton } from "@clerk/nextjs";
 
 const HomePage = () => {
-    return (
-        <div>
-                Welcome to Homepage
-                <UserButton afterSwitchSessionUrl="/" />
-        </div>
-    )
-}
+  return (
+    <div>
+      homepage
+    </div>
+  );
+};
 export default HomePage;
