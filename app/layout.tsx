@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}
       >
@@ -42,7 +42,12 @@ export default function RootLayout({
             },
           }}
         >
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider
+          attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >{children}</ThemeProvider>
         </ClerkProvider>
       </body>
     </html>

@@ -1,50 +1,40 @@
-"use client";
-import { useTheme } from "@/context/ThemeProvider";
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarTrigger,
-} from "@/components/ui/menubar";
-import Image from "next/image";
-import { themes } from "@/constants";
+"use client"
 
-const Theme = () => {
-  const { mode, setMode } = useTheme();
+import * as React from "react"
+import { Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
+
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+export default function Theme() {
+  const { setTheme } = useTheme()
+
   return (
-    <Menubar className="relative border-none bg-transparent shadow-none">
-      <MenubarMenu>
-        <MenubarTrigger className="focus:bg-light-900 data-[state=open]:bg-light-900 dark:focus:bg-dark-200 dark:data-[state=open]:bg-dark-200 rounded-md p-2 hover:bg-light-900 dark:hover:bg-dark-200">
-          {mode === "light" ? (
-            <Image
-              src="/assets/icons/sun.svg"
-              alt="Sun"
-              width={20}
-              height={20}
-            />
-          ) : (
-            <Image
-              src="/assets/icons/moon.svg"
-              alt="Moon"
-              width={20}
-              height={20}
-            />
-          )}
-        </MenubarTrigger>
-        <MenubarContent className="absolute right-[-3rem] mt-3 min-w-[120px] rounded border py-2 shadow-md dark:border-dark-400 dark:bg-dark-300">
-          {themes.map((item) => (
-            <MenubarItem key={item.value} onClick={() => {}}>
-              <Image src={item.icons} alt={item.label} width={20} height={20} 
-              className= {`${mode === item.value && 'active-theme' }` }
-              />
-            </MenubarItem>
-          ))}
-        </MenubarContent>
-      </MenubarMenu>
-    </Menubar>
-  );
-};
-export default Theme;
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="icon">
+          <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme("light")}>
+          Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
+          Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")}>
+          System
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
