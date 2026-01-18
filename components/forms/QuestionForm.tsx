@@ -1,7 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, ControllerRenderProps} from "react-hook-form";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -41,11 +40,7 @@ const QuestionForm = () => {
     try {
         // make an async call to api to create a question
         // contain all form data
-        await createQuestion({
-        title: values.title,
-        // explanation: editorRef.current?.getContent() || "",
-        tags: values.tags,
-      });
+        await createQuestion();
         
         // navigate to home
     } catch (error) {
