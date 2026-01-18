@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, ControllerRenderProps } from "react-hook-form";
+import { useForm, ControllerRenderProps} from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +19,8 @@ import { useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
+import { createQuestion } from "@/lib/actions/question.action";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const type: any = "create";
 
 const QuestionForm = () => {
@@ -33,12 +35,17 @@ const QuestionForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof QuestionsSchema>) {
+  async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
     setIsSubmitting(true);
     console.log(values);
     try {
         // make an async call to api to create a question
         // contain all form data
+        await createQuestion({
+        title: values.title,
+        // explanation: editorRef.current?.getContent() || "",
+        tags: values.tags,
+      });
         
         // navigate to home
     } catch (error) {
@@ -114,7 +121,7 @@ const QuestionForm = () => {
         <FormField
           control={form.control}
           name="explanation"
-          render={() => (
+          render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="paragraph-semibold text-dark-400_light800">
                 Detail Explanation of your problem{" "}
@@ -126,6 +133,8 @@ const QuestionForm = () => {
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
                   onInit={(_evt, editor) => (editorRef.current = editor)}
                   initialValue=""
+                  onBlur={field.onBlur}
+                  onEditorChange={(content) => field.onChange(content)}
                   init={{
                     height: 350,
                     menubar: false,
