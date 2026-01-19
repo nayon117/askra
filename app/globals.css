@@ -162,3 +162,9 @@ code {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+html {
+  scrollbar-gutter: stable;
+}
+body {
+  overscroll-behavior: none;
+}
