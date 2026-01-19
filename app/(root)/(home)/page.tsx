@@ -5,65 +5,15 @@ import NoResult from "@/components/shared/NoResult";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filter";
+import { getQuestions } from "@/lib/actions/question.action";
 import Link from "next/link";
 
 
-const questions = [
-  {
-    _id: "1",
-    title: "How to implement authentication in Next.js?",
-    tags: [
-      { _id: "t1", name: "Next.js" },
-      { _id: "t2", name: "Authentication" },
-    ],
-    author: {
-      _id: "u1",
-      name: "John Doe",
-      picture: "https://i.pravatar.cc/150?img=1",
-    },
-    upvotes: 10,
-    views: 1000000,
-    answers: [{}, {}], 
-    createdAt: new Date("2026-01-01"),
-  },
-  {
-    _id: "2",
-    title: "What is the difference between React and Angular?",
-    tags: [
-      { _id: "t3", name: "React" },
-      { _id: "t4", name: "Angular" },
-    ],
-    author: {
-      _id: "u2",
-      name: "Jane Smith",
-      picture: "https://i.pravatar.cc/150?img=2",
-    },
-    upvotes: 15,
-    views: 150,
-    answers: [{}, {}, {}], 
-    createdAt: new Date("2025-02-01"),
-  },
-  {
-    _id: "3",
-    title: "How to manage state in React?",
-    tags: [
-      { _id: "t5", name: "React" },
-      { _id: "t6", name: "State Management" },
-    ],
-    author: {
-      _id: "u3",
-      name: "Alice Johnson",
-      picture: "https://i.pravatar.cc/150?img=3",
-    },
-    upvotes: 20,
-    views: 200,
-    answers: [{}, {}, {}, {}, {}], 
-    createdAt: new Date("2025-03-01"),
-  },
-];
 
 
-const HomePage = () => {
+
+const HomePage = async () => {
+    const result = await getQuestions({});
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -90,7 +40,7 @@ const HomePage = () => {
       </div>
       <HomeFilters />
       <div className="mt-10 flex flex-col w-full gap-6">
-        {questions.length > 0 ? questions.map((question)=>(
+        {result?.questions && result.questions.length > 0 ? result.questions.map((question)=>(
             <QuestionCard key={question._id} 
             _id = {question._id}
             title = {question.title}
