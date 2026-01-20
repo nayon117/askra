@@ -9,9 +9,6 @@ import { getQuestions } from "@/lib/actions/question.action";
 import Link from "next/link";
 
 
-
-
-
 const HomePage = async () => {
     const result = await getQuestions({});
   return (

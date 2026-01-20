@@ -31,7 +31,7 @@ const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
         <SelectContent side="bottom" avoidCollisions={false}>
           <SelectGroup>
             {filters.map((filter) => (
-              <SelectItem key={filter.value} value={filter.value}>
+              <SelectItem key={filter.value} value={filter.value} className="cursor-pointer">
                 {filter.name}
               </SelectItem>
             ))}
