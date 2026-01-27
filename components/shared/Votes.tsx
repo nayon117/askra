@@ -1,6 +1,7 @@
 "use client";
 import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.action";
 import { downvoteQuestion, upvoteQuestion } from "@/lib/actions/question.action";
+import { toggleSavedQuestion } from "@/lib/actions/user.action";
 import { formatNumber } from "@/lib/utils";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -75,7 +76,11 @@ const Votes = ({
   };
 
   const handleSave = async () => {
-
+     await toggleSavedQuestion({
+        userId: JSON.parse(userId),
+        questionId: JSON.parse(itemId),
+        path:pathname
+     })
   };
 
   return (
