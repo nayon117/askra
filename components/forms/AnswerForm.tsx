@@ -11,13 +11,24 @@ import { AnswerSchema } from "@/lib/validations";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Editor } from "@tinymce/tinymce-react";
+import { Editor as TinyMCEEditor } from "tinymce";
 import { useRef, useState } from "react";
 import { Button } from "../ui/button";
 import Image from "next/image";
+import { createAnswer } from "@/lib/actions/answer.action";
+import { usePathname } from "next/navigation";
 
-const AnswerForm = () => {
+interface Props {
+  question: string;
+  questionId: string;
+  authorId: string;
+}
+
+
+const AnswerForm = ({ question, questionId, authorId }:Props) => {
+  const pathname = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const editorRef = useRef(null);
+  const editorRef = useRef<TinyMCEEditor | null>(null);
   const form = useForm<z.infer<typeof AnswerSchema>>({
     resolver: zodResolver(AnswerSchema),
     defaultValues: {
@@ -25,9 +36,25 @@ const AnswerForm = () => {
     },
   });
 
-  const handleCreateAnswer = (data: z.infer<typeof AnswerSchema>) => {
+  const handleCreateAnswer = async (values: z.infer<typeof AnswerSchema>) => {
     setIsSubmitting(true);
-    console.log(data);
+    try {
+        await createAnswer({
+            content: values.answer,
+            author:JSON.parse(authorId),
+            question:JSON.parse(questionId),
+            path: pathname
+        })
+
+        form.reset();
+        if(editorRef.current) {
+            editorRef.current.setContent('');
+        }
+    } catch (error) {
+        console.error("Error submitting answer:", error);
+    } finally {
+        setIsSubmitting(false);
+    }
   };
 
   return (
