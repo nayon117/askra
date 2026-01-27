@@ -105,6 +105,7 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
     console.log(error);
   }
 }
+
 export async function downvoteQuestion(params: QuestionVoteParams) {
   try {
     connectToDatabase();
