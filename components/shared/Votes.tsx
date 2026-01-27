@@ -1,4 +1,5 @@
 "use client";
+import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.action";
 import { downvoteQuestion, upvoteQuestion } from "@/lib/actions/question.action";
 import { formatNumber } from "@/lib/utils";
 import Image from "next/image";
@@ -41,13 +42,13 @@ const Votes = ({
                 path:pathname
             })
         } else if(type === "answer"){
-            // await upvoteAnswer({
-            //     questionId: JSON.parse(itemId),
-            //     userId: JSON.parse(userId),
-            //     hasupVoted,
-            //     hasdownVoted,
-            //     path:pathname
-            // })
+            await upvoteAnswer({
+                answerId: JSON.parse(itemId),
+                userId: JSON.parse(userId),
+                hasupVoted,
+                hasdownVoted,
+                path:pathname
+            })
         }
         //TODO: show a toast
         return;
@@ -62,13 +63,13 @@ const Votes = ({
                 path:pathname
             })
         } else if(type === "answer"){
-            //  await downvoteAnswer({
-            //     questionId: JSON.parse(itemId),
-            //     userId: JSON.parse(userId),
-            //     hasupVoted,
-            //     hasdownVoted,
-            //     path:pathname
-            // })
+             await downvoteAnswer({
+                answerId: JSON.parse(itemId),
+                userId: JSON.parse(userId),
+                hasupVoted,
+                hasdownVoted,
+                path:pathname
+            })
         }
     }
   };
@@ -120,7 +121,7 @@ const Votes = ({
           </div>
         </div>
       </div>
-      <Image
+      {type === "question" && <Image
         src={
           hasSaved
             ? "/assets/icons/star-filled.svg"
@@ -131,7 +132,7 @@ const Votes = ({
         alt="star icon"
         className="cursor-pointer"
         onClick={handleSave}
-      />
+      />}
     </div>
   );
 };
