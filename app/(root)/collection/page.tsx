@@ -33,7 +33,7 @@ const Collection = async () => {
       </div>
       <div className="mt-10 flex flex-col w-full gap-6">
         {result?.questions && result.questions.length > 0 ? (
-          result.questions.map((question) => (
+          result.questions.map((question:any) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
