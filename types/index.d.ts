@@ -29,7 +29,7 @@ export interface SearchParamsProps {
 searchParams: { [key: string]: string | undefined };
 }
 export interface URLProps {
-params: { id: string };
+ params: Promise<{ id: string }>;
 searchParams: { [key: string]: string | undefined };
 }
 export interface BadgeCounts {
