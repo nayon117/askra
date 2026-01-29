@@ -87,10 +87,18 @@ const Profile = async ({ params, searchParams }: URLProps) => {
             <TabsTrigger value="answers">Answers</TabsTrigger>
           </TabsList>
           <TabsContent value="top-posts">
-            <QuestionTab />
+            <QuestionTab
+              searchParams={searchParams}
+              userId={userInfo?.user._id}
+              clerkId={clerkId}
+            />
           </TabsContent>
-          <TabsContent value="answers">
-            <AnswerTab />
+          <TabsContent value="answers" className="flex w-full flex-col gap-6">
+            <AnswerTab
+             searchParams={searchParams}
+              userId={userInfo?.user._id}
+              clerkId={clerkId}
+            />
           </TabsContent>
         </Tabs>
       </div>
