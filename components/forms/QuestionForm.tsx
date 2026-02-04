@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, ControllerRenderProps} from "react-hook-form";
+import { useForm, ControllerRenderProps } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,46 +16,63 @@ import { QuestionsSchema } from "@/lib/validations";
 import { z } from "zod";
 import { useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
+import type { Editor as TinyMCEEditor } from "tinymce";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
-import { createQuestion } from "@/lib/actions/question.action";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { usePathname, useRouter } from "next/navigation";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const type: any = "create";
 
-const QuestionForm = ({ mongoUserId }: { mongoUserId: string }) => {
-  const editorRef = useRef(null);
+interface Props {
+  type?: string;
+  mongoUserId: string;
+  questionDetails?: string;
+}
+
+const QuestionForm = ({ type, mongoUserId, questionDetails }: Props) => {
+  const editorRef = useRef<TinyMCEEditor | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
+  const parsedQuestionDetails = JSON.parse(questionDetails || "");
+  const groupedTag = parsedQuestionDetails.tags.map((tag: { name: string }) => tag.name);
 
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
-      title: "",
-      explanation: "",
-      tags: [],
+      title: parsedQuestionDetails?.title || "",
+      explanation: parsedQuestionDetails?.content || "",
+      tags: groupedTag || [],
     },
   });
 
   async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
     setIsSubmitting(true);
     try {
-        await createQuestion({
+      if (type === "edit") {
+        await editQuestion({
+            questionId: parsedQuestionDetails._id,
             title: values.title,
             content: values.explanation,
-            tags: values.tags,
-            author: JSON.parse(mongoUserId),    
-            path: pathname
+            path: pathname,
+        })
+        router.push(`/question/${parsedQuestionDetails._id}`);
+      } else {
+        await createQuestion({
+          title: values.title,
+          content: values.explanation,
+          tags: values.tags,
+          author: JSON.parse(mongoUserId),
+          path: pathname,
         });
-        
+
         // navigate to home
         router.push("/");
+      }
     } catch (error) {
-        console.log(error)
+      console.log(error);
     } finally {
-        setIsSubmitting(false);
+      setIsSubmitting(false);
     }
   }
 
@@ -136,7 +153,7 @@ const QuestionForm = ({ mongoUserId }: { mongoUserId: string }) => {
                 <Editor
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
                   onInit={(_evt, editor) => (editorRef.current = editor)}
-                  initialValue=""
+                  initialValue={parsedQuestionDetails?.content || ""}
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
                   init={{
@@ -185,6 +202,7 @@ const QuestionForm = ({ mongoUserId }: { mongoUserId: string }) => {
               </FormLabel>
               <FormControl className="mt-3.5">
                 <Input
+                  disabled = {type === "edit"}
                   className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
                   placeholder="Add tags"
                   onKeyDown={(e) => handleInputKeyDown(e, field)}
@@ -196,16 +214,16 @@ const QuestionForm = ({ mongoUserId }: { mongoUserId: string }) => {
                     <Badge
                       key={tag}
                       className="subtle-medium background-light800_dark300 text-dark400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 capitalize"
-                      onClick={() => handleTagRemove(tag, field)}
+                      onClick={() => type !== "edit" ? handleTagRemove(tag, field) : ()=>{}}
                     >
                       {tag}
-                      <Image
+                     {type !== "edit" && <Image
                         src="/assets/icons/close.svg"
                         alt="Remove tag"
                         width={12}
                         height={12}
                         className="cursor-pointer invert-0 object-contain dark:invert"
-                      />
+                      />}
                     </Badge>
                   ))}
                 </div>
