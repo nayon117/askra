@@ -19,7 +19,7 @@ import { Editor } from "@tinymce/tinymce-react";
 import type { Editor as TinyMCEEditor } from "tinymce";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
-import { createQuestion } from "@/lib/actions/question.action";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
@@ -35,7 +35,7 @@ const QuestionForm = ({ type, mongoUserId, questionDetails }: Props) => {
   const pathname = usePathname();
 
   const parsedQuestionDetails = JSON.parse(questionDetails || "");
-  const groupedTag = parsedQuestionDetails.tags.map((tag) => tag.name);
+  const groupedTag = parsedQuestionDetails.tags.map((tag: { name: string }) => tag.name);
 
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
@@ -50,7 +50,12 @@ const QuestionForm = ({ type, mongoUserId, questionDetails }: Props) => {
     setIsSubmitting(true);
     try {
       if (type === "edit") {
-
+        await editQuestion({
+            questionId: parsedQuestionDetails._id,
+            title: values.title,
+            content: values.explanation,
+            path: pathname,
+        })
         router.push(`/question/${parsedQuestionDetails._id}`);
       } else {
         await createQuestion({
